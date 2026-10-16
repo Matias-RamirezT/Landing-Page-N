@@ -9,8 +9,8 @@
    portalId: ID de tu cuenta (Hub ID), visible en el menú de tu cuenta HubSpot.
    formId:   ID del formulario (aparece en la URL del editor o en el código de inserción). */
 const HUBSPOT = {
-  portalId: 'TU_PORTAL_ID',
-  formId: 'TU_FORM_ID'
+  portalId: '52179079',
+  formId: '4535c23b-bc09-4ab0-a686-3091ec2bccc1'
 };
 
 window.dataLayer = window.dataLayer || [];
