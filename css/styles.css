@@ -204,6 +204,14 @@ h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
 .form__status.ok { color: #34D399; }
 .form__status.error { color: #F87171; }
 
+/* Wrapper del embed nativo de HubSpot */
+.hs-form-wrapper {
+  padding: 32px;
+}
+.hs-form-wrapper .hs-form-frame {
+  width: 100%;
+}
+
 /* ---------- 8. FAQ ---------- */
 .faq { display: grid; gap: 12px; margin-top: 2rem; }
 .faq details { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0 22px; }

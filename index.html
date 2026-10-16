@@ -198,40 +198,14 @@
           </ul>
         </div>
 
-        <form class="form" id="leadForm" novalidate>
-          <div class="form__row">
-            <label>Nombre
-              <input type="text" name="firstname" required autocomplete="given-name">
-            </label>
-            <label>Apellido
-              <input type="text" name="lastname" required autocomplete="family-name">
-            </label>
+        <div class="form hs-form-wrapper">
+          <script src="https://js.hsforms.net/forms/embed/52179079.js" defer></script>
+          <div class="hs-form-frame"
+               data-region="na1"
+               data-form-id="4535c23b-bc09-4ab0-a686-3091ec2bccc1"
+               data-portal-id="52179079">
           </div>
-          <label>Correo electrónico
-            <input type="email" name="email" required autocomplete="email">
-          </label>
-          <label>Institución educativa
-            <input type="text" name="company" required autocomplete="organization">
-          </label>
-          <label>Cargo
-            <select name="jobtitle" required>
-              <option value="">Selecciona una opción</option>
-              <option>Rector(a)</option>
-              <option>Coordinador(a) académico(a)</option>
-              <option>Docente</option>
-              <option>Otro</option>
-            </select>
-          </label>
-          <label>Mensaje (opcional)
-            <textarea name="message" rows="3"></textarea>
-          </label>
-          <label class="form__consent">
-            <input type="checkbox" name="consent" required>
-            Autorizo el tratamiento de mis datos para ser contactado (Ley 1581 de 2012).
-          </label>
-          <button type="submit" class="btn btn--full" id="submitBtn">Enviar solicitud</button>
-          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
-        </form>
+        </div>
       </div>
     </section>
 

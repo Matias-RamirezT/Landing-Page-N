@@ -2,16 +2,8 @@
    NeuroLearn IA — Landing Page
    - Menú móvil
    - 5 eventos personalizados para Google Tag Manager (dataLayer)
-   - Envío del formulario a HubSpot (Forms API v3)
+   - Evento generate_lead escuchado desde el embed nativo de HubSpot
    ========================================================= */
-
-/* ---------- CONFIGURACIÓN DE HUBSPOT ----------
-   portalId: ID de tu cuenta (Hub ID), visible en el menú de tu cuenta HubSpot.
-   formId:   ID del formulario (aparece en la URL del editor o en el código de inserción). */
-const HUBSPOT = {
-  portalId: '52179079',
-  formId: '4535c23b-bc09-4ab0-a686-3091ec2bccc1'
-};
 
 window.dataLayer = window.dataLayer || [];
 
@@ -98,87 +90,18 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* =========================================================
-   EVENTO 5: generate_lead — formulario enviado con éxito a HubSpot
+   EVENTO 5: generate_lead — formulario de HubSpot enviado con éxito
+   HubSpot emite un postMessage con type 'hsFormCallback'
+   y eventName 'onFormSubmitted' cuando el envío es exitoso.
    ========================================================= */
-const form = document.getElementById('leadForm');
-const statusEl = document.getElementById('formStatus');
-const submitBtn = document.getElementById('submitBtn');
-
-/** Lee la cookie de seguimiento de HubSpot (si existe) para asociar la visita. */
-function getHubspotCookie() {
-  const match = document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/);
-  return match ? match[1] : undefined;
-}
-
-function setStatus(message, type) {
-  statusEl.textContent = message;
-  statusEl.className = 'form__status ' + (type || '');
-}
-
-function validateForm() {
-  let valid = true;
-  form.querySelectorAll('[required]').forEach((field) => {
-    const ok = field.type === 'checkbox' ? field.checked : field.checkValidity();
-    field.classList.toggle('is-invalid', !ok);
-    if (!ok) valid = false;
-  });
-  return valid;
-}
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  if (!validateForm()) {
-    setStatus('Revisa los campos marcados en rojo.', 'error');
-    return;
-  }
-
-  const data = new FormData(form);
-  const fieldNames = ['firstname', 'lastname', 'email', 'company', 'jobtitle', 'message'];
-
-  const payload = {
-    fields: fieldNames
-      .filter((name) => data.get(name))
-      .map((name) => ({ objectTypeId: '0-1', name, value: data.get(name) })),
-    context: {
-      pageUri: window.location.href,
-      pageName: document.title
-    }
-  };
-
-  const hutk = getHubspotCookie();
-  if (hutk) payload.context.hutk = hutk;
-
-  submitBtn.disabled = true;
-  setStatus('Enviando...', '');
-
-  try {
-    const response = await fetch(
-      `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT.portalId}/${HUBSPOT.formId}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }
-    );
-
-    if (!response.ok) {
-      const detail = await response.text();
-      console.error('HubSpot respondió con error:', response.status, detail);
-      throw new Error('HubSpot error ' + response.status);
-    }
-
-    // Solo se envía el evento si HubSpot confirmó el registro (sin datos personales).
+window.addEventListener('message', (event) => {
+  if (
+    event.data &&
+    event.data.type === 'hsFormCallback' &&
+    event.data.eventName === 'onFormSubmitted'
+  ) {
     trackEvent('generate_lead', {
-      form_name: 'solicitud_demo',
-      lead_role: data.get('jobtitle')
+      form_name: 'solicitud_demo'
     });
-
-    form.reset();
-    setStatus('¡Gracias! Recibimos tu solicitud y te contactaremos pronto.', 'ok');
-  } catch (err) {
-    setStatus('No pudimos enviar tu solicitud. Intenta de nuevo en unos minutos.', 'error');
-  } finally {
-    submitBtn.disabled = false;
   }
 });
