@@ -105,3 +105,36 @@ window.addEventListener('message', (event) => {
     });
   }
 });
+
+/* =========================================================
+   Carga diferida del embed de HubSpot
+   El formulario está fuera de la primera pantalla. Se descarga cuando
+   la persona se acerca a la sección para no retrasar el contenido inicial.
+   ========================================================= */
+const contactSection = document.getElementById('contacto');
+let hubSpotLoaded = false;
+
+function loadHubSpot() {
+  if (hubSpotLoaded) return;
+  hubSpotLoaded = true;
+
+  const script = document.createElement('script');
+  script.src = 'https://js.hsforms.net/forms/embed/52179079.js';
+  script.async = true;
+  document.body.appendChild(script);
+}
+
+if (contactSection) {
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        loadHubSpot();
+        observer.disconnect();
+      }
+    }, { rootMargin: '600px 0px' });
+
+    observer.observe(contactSection);
+  } else {
+    loadHubSpot();
+  }
+}
